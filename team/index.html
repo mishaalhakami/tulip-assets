@@ -461,10 +461,13 @@ async function uploadFiles(files,kind,slot){
       const f = kind==="photo"? await shrink(f0) : f0;
       if(f.size>30e6) throw new Error(ERR.bad_size);
       const data=await toB64(f);
-      const res=await new Promise((resolve,reject)=>{const x=new XMLHttpRequest();x.open("POST",url);x.setRequestHeader("Content-Type","text/plain;charset=utf-8");
-        x.upload.onprogress=ev=>{if(ev.lengthComputable)pr.value=Math.round(ev.loaded*95/ev.total)};
-        x.onload=()=>{try{resolve(JSON.parse(x.responseText))}catch(_){reject(new Error("رد غير متوقع من الرفع"))}};x.onerror=()=>reject(new Error("انقطع الاتصال"));
-        x.send(JSON.stringify({pin:PIN,code:c.code,sec:c.sec,kind,slot,name:f.name,mime:f.type||"image/jpeg",data}))});
+      // طلب بسيط بدون مستمع تقدم، عشان سكربت قوقل يقبله من المتصفح
+      pr.removeAttribute("value"); lab.textContent="جاري الرفع…";
+      let res;
+      try{
+        const r=await fetch(url,{method:"POST",body:JSON.stringify({pin:PIN,code:c.code,sec:c.sec,kind,slot,name:f.name,mime:f.type||"image/jpeg",data})});
+        const txt=await r.text(); try{res=JSON.parse(txt)}catch(_){throw new Error("رد غير متوقع من الرفع")}
+      }catch(err){ throw new Error(err.message&&err.message.startsWith("رد")?err.message:"انقطع الاتصال، حاول مرة ثانية"); }
       if(!res.ok) throw new Error(ERR[res.error]||res.error||"ما انرفع");
       pr.value=100; lab.textContent="تم ✓"; lab.style.color="var(--green)"; ok++;
     }catch(err){ lab.textContent=err.message; lab.style.color="var(--red)"; }
