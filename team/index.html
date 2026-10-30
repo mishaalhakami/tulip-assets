@@ -89,6 +89,39 @@ main{padding-block:12px 60px}
 .rtop .pill{margin-inline-start:auto}
 .rname{overflow-wrap:anywhere;font-size:.93rem}
 .rmeta{display:flex;gap:10px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+
+/* ===== ألوان الأقسام والبطاقات ===== */
+.sec{--sc:var(--accent);border-inline-start:5px solid var(--sc);background:color-mix(in srgb,var(--sc) 9%,var(--surface))}
+.sec[aria-pressed="true"]{background:color-mix(in srgb,var(--sc) 22%,var(--surface));border-color:var(--sc);box-shadow:0 0 0 1px var(--sc)}
+.sec .ico{font-size:1.15rem;line-height:1}
+.sec .sbar{display:flex;height:6px;border-radius:99px;background:color-mix(in srgb,var(--sc) 18%,var(--sunk));overflow:hidden}
+.sec .sbar i{display:block;height:100%;background:var(--green);border-radius:99px}
+.sec small{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.row{--sc:var(--accent);grid-template-columns:64px minmax(0,1fr);column-gap:12px;align-items:center;border-inline-start:6px solid var(--sc);position:relative}
+.row.b-red{background:color-mix(in srgb,var(--red) 5%,var(--surface))}
+.row.b-amber{background:color-mix(in srgb,var(--amber) 7%,var(--surface))}
+.row.b-green{background:color-mix(in srgb,var(--green) 8%,var(--surface))}
+.row.p1{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent) 55%,transparent)}
+.row.seen{opacity:.92}
+.row:hover{border-color:var(--sc)}
+.cover{width:64px;height:64px;border-radius:12px;overflow:hidden;background:color-mix(in srgb,var(--sc) 16%,var(--sunk));display:grid;place-items:center;font-size:1.7rem}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.rbody{display:grid;gap:4px;min-width:0}
+.code.big{font-size:1.05rem;color:var(--sc)}
+.shotbar{display:flex;gap:3px;align-items:center}
+.shotbar i{width:16px;height:6px;border-radius:3px;background:var(--line)}
+.shotbar i.on{background:var(--green)}
+.shotbar span{font-size:.72rem;color:var(--muted);margin-inline-start:6px;font-variant-numeric:tabular-nums}
+.bpill{font-size:.78rem;padding:2px 10px;border-radius:99px;font-weight:600;white-space:nowrap;margin-inline-start:auto}
+.bpill.red{background:var(--red-soft);color:var(--red)} .bpill.amber{background:var(--amber-soft);color:var(--amber)} .bpill.green{background:var(--green-soft);color:var(--green)}
+.ghead{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 12px;border-radius:12px;background:color-mix(in srgb,var(--sc) 14%,var(--bg));font-family:var(--display);font-weight:700;color:var(--fg);position:sticky;top:var(--hh,150px);z-index:3}
+.ghead small{font-family:var(--body);font-weight:400;color:var(--muted);font-size:.8rem;margin-inline-start:auto}
+.cheer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:10px}
+.cheer b{font-family:var(--display);font-size:1.4rem;color:var(--green);font-variant-numeric:tabular-nums}
+.cheer .bar{display:flex;flex:1 1 160px;height:10px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.cheer .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),color-mix(in srgb,var(--green) 60%,var(--accent)))}
+.dhead{border-bottom:4px solid var(--sc,var(--line))}
+@media (prefers-reduced-motion:no-preference){.cheer .bar i,.sec .sbar i{transition:width .5s ease}}
 .more{justify-self:center;margin-top:8px}
 .empty{text-align:center;color:var(--muted);padding:40px 10px}
 
@@ -208,6 +241,14 @@ const SPEC = {
  "الشموع":{main:"الشمعة مطفية من الأمام",angle:"من الجنب ومن فوق",size:"الارتفاع والقطر بالمسطرة",detail:"الملمس عن قرب",use:"شغالة داخل تنسيقة"},
  "الأدوات":{main:"الأداة كاملة",angle:"مفتوحة أو من الجنب",size:"في اليد عشان يبان الحجم",detail:"الجودة والتفاصيل عن قرب",use:"أثناء الاستخدام في تنسيقة"}
 };
+const SEC_STYLE = {
+ "الورد":{c:"#C2185B",i:"🌹"}, "الفازات":{c:"#00838F",i:"🏺"}, "التغليف":{c:"#7B1FA2",i:"🎁"}, "شرائط":{c:"#E65100",i:"🎀"},
+ "الأدوات":{c:"#546E7A",i:"✂️"}, "ستاندات":{c:"#6D4C41",i:"🪴"}, "البلونات":{c:"#1565C0",i:"🎈"}, "الشموع":{c:"#C49000",i:"🕯️"}
+};
+const sst = s => SEC_STYLE[s] || {c:"var(--accent)",i:"📦"};
+let MINE_TODAY = 0;
+const SEEN = new Set((()=>{try{return JSON.parse(localStorage.getItem("tl_seen")||"[]")}catch(e){return []}})());
+function markSeen(code){SEEN.add(code);try{localStorage.setItem("tl_seen",JSON.stringify([...SEEN].slice(-3000)))}catch(e){}}
 const SLOT_NAME = {main:"١ الرئيسية",angle:"٢ الزوايا",back:"٢ب الخلف",size:"٣ المقاس",detail:"٤ عن قرب",use:"٥ الاستخدام",colors:"الألوان كلها",other:"صور إضافية",edited:"الصور المعدّلة",card:"بطاقة المعلومات"};
 const AR = n => String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
 const $ = id => document.getElementById(id);
@@ -248,6 +289,7 @@ $("btnOut").onclick=logout;
 async function loadCodes(full){
   const r = await rpc("tl_codes",{p_since: full?null:SINCE});
   (r.rows||[]).forEach(c=>CODES.set(c.code,c));
+  if(r.mine_today!=null) MINE_TODAY = r.mine_today;
   SINCE = r.now; $("sync").className="sync";
   return (r.rows||[]).length;
 }
@@ -302,10 +344,16 @@ function visibleBase(){ return [...CODES.values()].filter(c=> ME.role!=="designe
 function render(){
   const base = visibleBase();
   const bySec = {}; base.forEach(c=>{(bySec[c.sec]=bySec[c.sec]||{red:0,amber:0,green:0,all:0}); bySec[c.sec].all++; const b=bucket(c); if(b) bySec[c.sec][b]++;});
-  $("secs").innerHTML = `<button class="sec" data-sec="" aria-pressed="${fSec===""}"><b>كل الأقسام</b><span class="cnt"><span class="c-red">${AR(base.filter(c=>bucket(c)==="red").length)}</span><span class="c-amber">${AR(base.filter(c=>bucket(c)==="amber").length)}</span><span class="c-green">${AR(base.filter(c=>bucket(c)==="green").length)}</span></span></button>`+
-    SEC_ORDER.filter(s=>bySec[s]).map(s=>{const v=bySec[s];return `<button class="sec" data-sec="${s}" aria-pressed="${fSec===s}"><b>${s} <span class="muted" style="font-weight:400">${AR(v.all)}</span></b><span class="cnt"><span class="c-red">${AR(v.red)}</span><span class="c-amber">${AR(v.amber)}</span><span class="c-green">${AR(v.green)}</span></span></button>`}).join("");
+  const tot={red:0,amber:0,green:0,all:base.length}; base.forEach(c=>{const b=bucket(c); if(b) tot[b]++});
+  const tab=(key,label,icon,color,v)=>{const pct=v.all?Math.round(v.green*100/v.all):0;
+    return `<button class="sec" style="--sc:${color}" data-sec="${key}" aria-pressed="${fSec===key}"><b><span class="ico">${icon}</span> ${label}</b>
+      <span class="sbar" aria-hidden="true"><i style="width:${pct}%"></i></span>
+      <span class="cnt"><span class="c-red">${AR(v.red)}</span><span class="c-amber">${AR(v.amber)}</span><span class="c-green">${AR(v.green)}</span></span>
+      <small>خلص ${AR(pct)}٪ من ${AR(v.all)}</small></button>`};
+  $("secs").innerHTML = tab("","كل الأقسام","📋","var(--accent)",tot) + SEC_ORDER.filter(s=>bySec[s]).map(s=>tab(s,s,sst(s).i,sst(s).c,bySec[s])).join("");
   const inSec = base.filter(c=>!fSec||c.sec===fSec);
   ["red","amber","green"].forEach(b=>{const el=$("f"+b[0].toUpperCase()+b.slice(1)); el.textContent=bl(b)+" "+AR(inSec.filter(c=>bucket(c)===b).length); el.setAttribute("aria-pressed",fBucket===b)});
+  const hh=document.querySelector("header.top"); if(hh) document.documentElement.style.setProperty("--hh",hh.offsetHeight+"px");
   renderList();
 }
 function filtered(){
@@ -321,17 +369,38 @@ function filtered(){
     if(f==="msgs"&&!c.msgs) return false;
     if(q&&!(c.code.toLowerCase().includes(q)||c.name.toLowerCase().includes(q))) return false;
     return true;
-  }).sort((a,b)=> (a.returned_note?0:1)-(b.returned_note?0:1) || a.priority-b.priority || a.code.localeCompare(b.code,undefined,{numeric:true}));
+  }).sort((a,b)=> (a.returned_note?0:1)-(b.returned_note?0:1) || (fSec?0:SEC_ORDER.indexOf(a.sec)-SEC_ORDER.indexOf(b.sec)) || a.priority-b.priority || a.code.localeCompare(b.code,undefined,{numeric:true}));
+}
+function needSlots(c){ return 5 + (FB.includes(c.sec)?1:0) + (c.multi?1:0); }
+const BICON={red:"● باقي",amber:"⏳ قيد العمل",green:"✓ خلص"};
+function rowHTML(c){
+  const st=sst(c.sec), b=bucket(c)||"amber", n=needSlots(c), d=Math.min(c.slots_done||0,n);
+  const cover = c.cover ? `<img loading="lazy" src="https://lh3.googleusercontent.com/d/${esc(c.cover)}=w160" alt="">` : st.i;
+  const designerView = ME.role==="designer";
+  return `<button class="row b-${b}${c.priority===1?" p1":""}${c.returned_note?" ret":""}${SEEN.has(c.code)?" seen":""}" style="--sc:${st.c}" data-open="${esc(c.code)}">
+    <span class="cover">${cover}</span>
+    <span class="rbody">
+      <span class="rtop"><span class="code big">${esc(c.code)}</span>${c.priority===1?`<span class="tag" style="background:var(--accent-soft);color:var(--accent)">★ أولوية ١</span>`:""}${c.multi?`<span class="tag">🎨 أكثر من لون</span>`:""}${c.questions&&c.questions.length?`<span class="tag" style="background:var(--amber-soft);color:var(--amber)">؟ عليه سؤال</span>`:""}${c.msgs?`<span class="tag">💬 ${AR(c.msgs)}</span>`:""}<span class="bpill ${b}">${BICON[b]}</span></span>
+      <span class="rname">${esc(c.name)}</span>
+      ${designerView?`<span class="rmeta"><span>${STAGE[c.stage]}</span><span>صور المصور: ${AR(c.photos)}</span><span>تصاميمي: ${AR(c.designs)}</span></span>`
+        :`<span class="shotbar" aria-label="اللقطات ${d} من ${n}">${Array.from({length:n},(_,i)=>`<i class="${i<d?"on":""}"></i>`).join("")}<span>اللقطات ${AR(d)}/${AR(n)} · ${STAGE[c.stage]}</span></span>`}
+      ${c.returned_note?`<span class="rmeta" style="color:var(--red)">↩ مرجّع: ${esc(c.returned_note).slice(0,70)}</span>`:""}
+    </span></button>`;
 }
 function renderList(){
-  const f=filtered(); $("summary").textContent = AR(f.length)+" كود"+(fSec?" في "+fSec:"");
+  const f=filtered();
+  const base=visibleBase().filter(c=>!fSec||c.sec===fSec), done=base.filter(c=>bucket(c)==="green").length, pct=base.length?Math.round(done*100/base.length):0;
+  $("summary").innerHTML = `<div class="cheer"><span>${ME.role==="admin"?"إنجاز الفريق":"إنجازك"}${fSec?" في "+sst(fSec).i+" "+fSec:""}</span><b>${AR(pct)}٪</b><span class="bar"><i style="width:${pct}%"></i></span><span>${MINE_TODAY?`رفعت اليوم ${AR(MINE_TODAY)} ${MINE_TODAY===1?"ملف":"ملفات"} 👏`:"ابدأ بأول كود باللون الأحمر 👇"}</span></div><span class="muted">${AR(f.length)} كود ظاهر</span>`;
   if(!f.length){$("list").innerHTML=`<p class="empty">ما فيه أكواد تطابق الفلتر.</p>`;return}
-  $("list").innerHTML = f.slice(0,shown).map(c=>`<button class="row${c.priority===1?" p1":""}${c.returned_note?" ret":""}" data-open="${esc(c.code)}">
-     <div class="rtop"><span class="code">${esc(c.code)}</span><span class="tag">${esc(c.sec)}</span>${c.multi?`<span class="tag">أكثر من لون</span>`:""}${c.questions&&c.questions.length?`<span class="tag" style="background:var(--amber-soft);color:var(--amber)">عليه سؤال</span>`:""}${c.priority===1?`<span class="tag" style="background:var(--accent-soft);color:var(--accent)">أولوية ١</span>`:""}<span class="pill st-${c.stage}">${STAGE[c.stage]}</span></div>
-     <div class="rname">${esc(c.name)}</div>
-     <div class="rmeta"><span>${esc(c.grp)}</span><span>صور: ${AR(c.photos)}</span>${ME.role!=="photographer"&&ME.role!=="shop"?`<span>تصاميم: ${AR(c.designs)}</span>`:""}${c.msgs?`<span>محادثة: ${AR(c.msgs)}</span>`:""}${c.returned_note?`<span style="color:var(--red)">مرجّع: ${esc(c.returned_note).slice(0,60)}</span>`:""}</div>
-   </button>`).join("") + (f.length>shown?`<button class="btn more" id="more">عرض ${AR(Math.min(50,f.length-shown))} كود ثاني</button>`:"");
+  let out="", last=null;
+  f.slice(0,shown).forEach(c=>{
+    if(!fSec && !c.returned_note && c.sec!==last){ last=c.sec; const st=sst(c.sec); const n=f.filter(x=>x.sec===c.sec).length;
+      out+=`<div class="ghead" style="--sc:${st.c}">${st.i} ${esc(c.sec)}<small>${AR(n)} كود</small></div>`; }
+    out+=rowHTML(c);
+  });
+  $("list").innerHTML = out + (f.length>shown?`<button class="btn more" id="more">عرض ${AR(Math.min(50,f.length-shown))} كود ثاني</button>`:"");
 }
+
 document.addEventListener("click",e=>{
   const s=e.target.closest("[data-sec]"); if(s&&!$("app").hidden&&$("detail").hidden){fSec=s.dataset.sec;shown=50;render();return}
   const b=e.target.closest("[data-b]"); if(b){fBucket=fBucket===b.dataset.b?"":b.dataset.b;shown=50;render();return}
@@ -371,7 +440,7 @@ ${c.multi?"- الألوان: (من صورة الألوان)\n":""}- المقاس
 - سطر أسفل: بسعر الجملة · بدون حد أدنى · توصيل لكل المملكة`;
   return {en,card};
 }
-async function openDetail(code){ openCode=code; $("detail").hidden=false; $("detail").innerHTML=`<div class="wrap" style="padding-top:20px">جاري التحميل…</div>`; await refreshDetail(); }
+async function openDetail(code){ openCode=code; markSeen(code); $("detail").hidden=false; $("detail").innerHTML=`<div class="wrap" style="padding-top:20px">جاري التحميل…</div>`; await refreshDetail(); }
 async function refreshDetail(){
   try{DETAIL=await rpc("tl_code",{p_code:openCode})}catch(e){toast(e.message);return}
   const c=DETAIL.code, files=DETAIL.files, msgs=DETAIL.messages, role=ME.role, admin=role==="admin";
@@ -397,7 +466,7 @@ async function refreshDetail(){
              `<select id="priSel" aria-label="الأولوية">${[1,2,3].map(p=>`<option value="${p}" ${c.priority===p?"selected":""}>أولوية ${AR(p)}</option>`).join("")}</select>`);
   }
   $("detail").innerHTML = `
-  <div class="dhead"><div class="wrap"><button class="btn" id="back">← رجوع</button><span class="code" style="font-size:1.1rem">${esc(c.code)}</span><span class="pill st-${c.stage}">${STAGE[c.stage]}</span></div></div>
+  <div class="dhead" style="--sc:${sst(c.sec).c}"><div class="wrap"><button class="btn" id="back">← رجوع</button><span style="font-size:1.3rem">${sst(c.sec).i}</span><span class="code" style="font-size:1.15rem;color:${sst(c.sec).c}">${esc(c.code)}</span><span class="pill st-${c.stage}">${STAGE[c.stage]}</span></div></div>
   <div class="wrap dbody">
     <div class="box"><h3>${esc(c.name)}</h3>
       <div class="kv"><span>القسم: ${esc(c.sec)}</span><span>الوضع: ${esc(c.grp)}</span>${c.qty!=null?`<span>الكمية: ${AR(c.qty)}</span>`:""}<span>صور المتجر الحالية: ${AR(c.store_imgs)}</span><span>أولوية ${AR(c.priority)}</span></div>
