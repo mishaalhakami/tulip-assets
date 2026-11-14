@@ -386,10 +386,11 @@ function renderCart(keepForm){
       <div class="fld"><label>الاسم</label><input id="fName" autocomplete="name" value="${esc(cust.name)}" placeholder="مثلاً: محمد"></div>
       <div class="fld"><label>المدينة</label><input id="fCity" value="${esc(cust.city)}" placeholder="مثلاً: الرياض"></div>
       <div class="fld"><label>نوع العميل</label><div class="chips" id="fType">${TYPES.map(x=>`<button type="button" class="chip${cust.type===x?" on":""}" data-t="${x}">${x}</button>`).join("")}</div></div>
+      <div class="fld"><label>ملاحظة (اختياري)</label><textarea id="fNote">${esc(cust.note||"")}</textarea></div>
       <p class="err" id="fErr"></p></div>`;
   if(formState) writeForm(formState);
   $("#fType").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;cust.type=b.dataset.t;$("#fType").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b));save("tc_cust",cust)};
-  ["fName","fCity"].forEach(id=>$("#"+id).addEventListener("input",()=>{const f=readForm();cust={...cust,...f};save("tc_cust",cust)}));
+  ["fName","fCity","fNote"].forEach(id=>$("#"+id).addEventListener("input",()=>{const f=readForm();cust={...cust,...f};save("tc_cust",cust)}));
   $("#cartFoot").innerHTML=`<div class="tot"><span>${num(t.n)} منتج · ${num(t.pcs)} قطعة</span>${t.allPriced?`<b>${money(t.sum)}</b>`:`<span>السعر يوصلك بالعرض</span>`}</div>
     <button class="primary wa" style="width:100%" id="send">${editing?`حفظ التعديل وإرساله بالواتساب`:`اطلب عرض سعر عبر واتساب`}</button>
     <div class="row2" style="margin-top:8px"><button class="ghost" id="dlCart">⬇︎ تحميل الطلب</button><button class="ghost" id="clr">تفريغ الطلب</button></div>
@@ -411,7 +412,7 @@ function waText(head,id,c,link){
   const ks=Object.keys(c);const t=totals(c);
   return [head+` رقم #${id}`,`الاسم: ${cust.name}`,`المدينة: ${cust.city}`,cust.type?`نوع العميل: ${cust.type}`:null,"",
     ...ks.map((k,i)=>`${i+1}) ${k} — ${BY[k]?BY[k].name:""} × ${c[k]}`),"",
-    `المجموع: ${t.n} منتج / ${t.pcs} قطعة`,null,"",`رابط الطلب والتعديل:`,link].filter(x=>x!==null).join("\n");
+    `المجموع: ${t.n} منتج / ${t.pcs} قطعة`,cust.note?`ملاحظة: ${cust.note}`:null,"",`رابط الطلب والتعديل:`,link].filter(x=>x!==null).join("\n");
 }
 async function submit(){
   const f=readForm();cust={...cust,...f};save("tc_cust",cust);const err=$("#fErr");
@@ -428,7 +429,7 @@ async function submit(){
       if(r&&r.error) throw new Error(r.error);
       id=editing.id;token=editing.token;head="تعديل طلب عرض سعر";
     }else{
-      const r=await rpc("cat_quote_create",{p_name:cust.name,p_city:cust.city,p_type:cust.type,p_items:items,p_note:null});
+      const r=await rpc("cat_quote_create",{p_name:cust.name,p_city:cust.city,p_type:cust.type,p_items:items,p_note:cust.note||null});
       if(r&&r.error==="busy"){err.textContent="فيه ضغط حالياً، جرّب بعد دقائق أو راسلنا مباشرة.";btn.disabled=false;btn.textContent="اطلب عرض سعر عبر واتساب";return}
       if(!r||r.error) throw new Error(r&&r.error);
       id=r.id;token=r.token;head="طلب عرض سعر";
