@@ -141,7 +141,15 @@ main{padding:8px 0 140px}
 .bar{position:fixed;inset:auto 0 0 0;z-index:30;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(60,30,20,.08);transform:translateY(110%);transition:transform .25s}
 .bar.show{transform:none}
 .bar .wrap{display:flex;align-items:center;gap:12px;padding:0}
-.bar .sum{flex:1;min-width:0}
+.bar .sum{flex:none;min-width:0;max-width:34%}
+.strip{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px 2px;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(to left,#000 85%,transparent);mask-image:linear-gradient(to left,#000 85%,transparent)}
+.strip::-webkit-scrollbar{display:none}
+.th{position:relative;flex:none;width:42px;height:52px;border-radius:10px;overflow:visible;border:1.5px solid var(--line);background:var(--brand-xl);padding:0;cursor:pointer}
+.th img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block}
+.th b{position:absolute;top:-6px;left:-6px;min-width:19px;height:19px;border-radius:999px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px;border:2px solid #fff;line-height:1}
+.th.new{animation:thPop .5s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes thPop{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.th.new{animation:none}}
 .bar .sum b{font-size:16px}
 .bar .sum div{font-size:13px;color:var(--muted)}
 .primary{border:0;background:var(--brand);color:#fff;border-radius:12px;padding:12px 18px;font-weight:600;font-size:15px}
@@ -305,6 +313,7 @@ footer a{color:var(--brand-d)}
 <div class="bar" id="bar">
   <div class="wrap">
     <div class="sum"><b id="barCount">0 منتج</b><div id="barSub">0 قطعة</div></div>
+    <div class="strip" id="strip" aria-label="منتجات طلبك"></div>
     <button class="primary" id="openCart">عرض الطلب ←</button>
   </div>
 </div>
@@ -437,7 +446,7 @@ function applyFx(){if(!FX)return;const {sku,d}=FX;FX=null;const sel=`[data-sku="
   document.querySelectorAll(".line"+sel).forEach(l=>{l.classList.remove("flash");void l.offsetWidth;l.classList.add("flash")});
   document.querySelectorAll(".tot").forEach(t=>{t.classList.remove("pulse");void t.offsetWidth;t.classList.add("pulse")})}
 function removeLine(ln,cb){if(RM){cb();return}ln.classList.add("out");setTimeout(cb,260)}
-function setQty(sku,q){q=Math.max(0,Math.min(100000,parseInt(q)||0)); if(q) cart[sku]=q; else delete cart[sku]; save("tc_cart",cart); refreshCard(sku); updateBar(); if($("#drawer").classList.contains("show")) renderCart(true); applyFx()}
+function setQty(sku,q){q=Math.max(0,Math.min(100000,parseInt(q)||0));if(q&&!cart[sku])LAST_ADDED=sku; if(q) cart[sku]=q; else delete cart[sku]; save("tc_cart",cart); refreshCard(sku); updateBar(); if($("#drawer").classList.contains("show")) renderCart(true); applyFx()}
 $("#list").addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){goSec(g.dataset.go,g.dataset.d);return}
   const sb=e.target.closest("[data-sub]");if(sb){SUB=SUB===sb.dataset.sub?null:sb.dataset.sub;renderList();const L=$("#list"),t=L.querySelector(".subs");if(t){const y=t.getBoundingClientRect().top+scrollY-$(".nav").offsetHeight-8;if(scrollY>y)scrollTo({top:y,behavior:"smooth"})}return}
   const a=e.target.closest("[data-a]");if(!a)return;const sku=a.closest(".card").dataset.sku;
@@ -464,7 +473,7 @@ $("#lb").onclick=()=>$("#lb").classList.remove("show");
 function totals(c){const ks=Object.keys(c);let pcs=0,sum=0,allPriced=SHOW_PRICES;ks.forEach(k=>{pcs+=c[k];const p=BY[k];if(SHOW_PRICES&&p&&p.price!=null) sum+=p.price*c[k]; else allPriced=false});return{n:ks.length,pcs,sum,allPriced}}
 /* add-to-order animations */
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
-function barTarget(){const b=$("#openCart").getBoundingClientRect();return{x:b.left+b.width/2,y:b.top+b.height/2}}
+function barTarget(){const s=$("#strip").getBoundingClientRect();if(s.width>40)return{x:s.right-24,y:s.top+s.height/2};const b=$("#openCart").getBoundingClientRect();return{x:b.left+b.width/2,y:b.top+b.height/2}}
 function bump(){const b=$("#bar");b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump")}
 function flyImg(img){
   if(RM||!img){bump();return}
@@ -487,12 +496,18 @@ function flyPlus(btn){
 }
 function updateBar(){const t=totals(cart);$("#bar").classList.toggle("show",t.n>0);
   $("#barCount").textContent=num(t.n)+" منتج"+(editing?` · تعديل طلب #${editing.id}`:"");
-  $("#barSub").textContent=num(t.pcs)+" قطعة"+(t.allPriced&&t.n?" · "+money(t.sum):"")}
+  $("#barSub").textContent=num(t.pcs)+" قطعة"+(t.allPriced&&t.n?" · "+money(t.sum):"");
+  renderStrip()}
+let LAST_ADDED=null;
+function renderStrip(){const st=$("#strip");if(!st)return;const ks=Object.keys(cart).reverse();
+  const sig=ks.map(k=>k+":"+cart[k]).join(",");if(st.dataset.sig===sig)return;st.dataset.sig=sig;
+  st.innerHTML=ks.map(k=>{const p=BY[k];if(!p)return"";return `<button class="th${k===LAST_ADDED?" new":""}" data-k="${esc(k)}" title="${esc(p.name)}"><img src="${esc(p.img)}" alt=""><b>${num(cart[k])}</b></button>`}).join("");
+  if(LAST_ADDED){st.scrollTo({left:0,behavior:"smooth"});LAST_ADDED=null}}
 
 /* ---------- drawer ---------- */
 function openCart(){renderCart();$("#drawer").classList.add("show");$("#dim").classList.add("show")}
 function closeCart(){$("#drawer").classList.remove("show");$("#dim").classList.remove("show")}
-$("#openCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#contShop").onclick=closeCart;$("#dim").onclick=closeCart;
+$("#openCart").onclick=openCart;$("#strip").onclick=e=>{if(e.target.closest(".th"))openCart()};$("#closeCart").onclick=closeCart;$("#contShop").onclick=closeCart;$("#dim").onclick=closeCart;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeCart();$("#lb").classList.remove("show")}});
 
 function lineHTML(p,q,priceOverride){
