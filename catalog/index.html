@@ -450,7 +450,7 @@ $("#list").addEventListener("change",e=>{if(e.target.dataset.a==="set"){const sk
 let st;$("#q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(()=>renderList(),180)});
 // swipe between sections (RTL: drag right = next section)
 (()=>{let x0=null,y0=0,t0=0;const L=$("#list");
-  L.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now()},{passive:true});
+  L.addEventListener("touchstart",e=>{if(e.touches.length!==1||e.target.closest(".subs,.tabs,.step,input,textarea")){x0=null;return}x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now()},{passive:true});
   L.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
     if($("#q").value.trim())return;
     if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.6&&Date.now()-t0<700) stepSec(dx>0?1:-1)},{passive:true});
