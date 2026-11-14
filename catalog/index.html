@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>كتالوج توليب</title>
+<link rel="icon" href="https://cdn.files.salla.network/other/530765564/49adb57c-1416-44d2-aa6b-6fb32ef04fec-original.webp">
 <meta name="description" content="كتالوج توليب لمستلزمات تنسيق الورد بأسعار الجملة — اختر منتجاتك واطلب عرض سعر عبر واتساب">
 <meta property="og:title" content="كتالوج توليب">
 <meta property="og:description" content="مستلزمات تنسيق الورد بأسعار الجملة — اطلب عرض سعر عبر واتساب">
@@ -28,32 +29,51 @@ img{display:block;max-width:100%}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
 
 /* header */
-.hero{background:linear-gradient(160deg,var(--brand) 0%,var(--brand-d) 100%);color:#fff;padding:22px 0 18px;position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;inset:auto -60px -90px auto;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.07)}
-.hero .row{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px}
-.logo .mark{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:24px}
-.logo h1{font-family:var(--hfont);margin:0;font-size:26px;font-weight:700;letter-spacing:-.3px}
-.logo small{display:block;font-size:13px;opacity:.85;font-weight:400;margin-top:-2px}
-.hero .note{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 14px;font-size:13px}
-.hero p.lead{margin:14px 0 0;font-size:15px;opacity:.92;max-width:640px}
-.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.pills span{font-size:12.5px;background:rgba(255,255,255,.12);border-radius:999px;padding:4px 11px}
+.hero{background:radial-gradient(120% 90% at 50% 0%,#fff 0%,var(--brand-xl) 55%,#F5E9E5 100%);padding:18px 0 16px;text-align:center;border-bottom:1px solid var(--line)}
+.hero .logo{height:104px;width:auto;margin:0 auto}
+.hero .tag{font-family:var(--hfont);font-size:16px;color:var(--brand-d);margin:4px 0 0;font-weight:600}
+.pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.pills span{font-size:12.5px;background:#fff;border:1px solid var(--line);color:var(--brand-d);border-radius:999px;padding:3px 11px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:640px;margin:14px auto 0}
+.how div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 4px;font-size:12px;line-height:1.4;color:var(--muted)}
+body.quote .how,body.quote .pills{display:none}
+.how b{display:grid;place-items:center;width:22px;height:22px;margin:0 auto 3px;border-radius:50%;background:var(--brand);color:#fff;font-size:13px}
+.how strong{display:block;color:var(--ink);font-size:13.5px;font-weight:600}
 
 /* sticky nav */
-.nav{position:sticky;top:0;z-index:20;background:rgba(255,252,251,.94);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
-.nav .wrap{padding-top:10px;padding-bottom:10px}
+.nav{position:sticky;top:0;z-index:20;background:rgba(255,252,251,.96);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line);box-shadow:0 4px 14px rgba(60,30,20,.05)}
+.nav .wrap{padding-top:10px;padding-bottom:8px}
 .search{display:flex;gap:8px;align-items:center}
 .search input{flex:1;min-width:0;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;font-size:15px;outline:none}
 .search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-l)}
 .iconbtn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 12px;font-size:14px;white-space:nowrap}
 .iconbtn:hover{border-color:var(--brand)}
-.tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-top:10px;padding-bottom:2px}
+.tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-top:10px;padding:4px 2px 6px;scroll-behavior:smooth}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:14px;font-weight:500;display:flex;gap:6px;align-items:center;transition:.15s}
-.tab b{font-weight:500;font-size:12px;color:var(--muted);background:var(--brand-xl);border-radius:999px;padding:0 7px}
-.tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
-.tab.on b{background:rgba(255,255,255,.2);color:#fff}
+.tab{--c:var(--brand);flex:none;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:7px 12px 6px;min-width:76px;display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .18s,background .18s,box-shadow .18s;color:var(--muted)}
+.tab i{font-style:normal;font-size:22px;line-height:1.2;filter:saturate(.8)}
+.tab span{font-size:13px;font-weight:500;white-space:nowrap}
+.tab small{font-size:11px;opacity:.8}
+.tab.on{background:var(--c);border-color:var(--c);color:#fff;transform:scale(1.08);box-shadow:0 6px 16px color-mix(in srgb,var(--c) 35%,transparent)}
+.tab.on i{filter:none}
+.tab.on span{font-weight:700}
+
+/* section banner */
+.banner{--c:var(--brand);margin-top:16px;border-radius:18px;padding:14px 16px;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 70%,#000));display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+.banner:after{content:"";position:absolute;left:-30px;bottom:-50px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.1)}
+.banner .ic{font-size:34px;width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.banner h2{font-family:var(--hfont);margin:0;font-size:21px}
+.banner p{margin:0;font-size:13px;opacity:.9}
+.banner .pos{margin-inline-start:auto;font-size:12.5px;background:rgba(255,255,255,.18);border-radius:999px;padding:3px 10px;white-space:nowrap;position:relative;z-index:1}
+.swipehint{text-align:center;font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.pager{display:flex;gap:10px;margin-top:18px}
+.pager button{--c:var(--brand);flex:1;border:1.5px solid var(--c);color:var(--c);background:#fff;border-radius:14px;padding:12px;font-weight:600;font-size:14px}
+.pager button.nx{background:var(--c);color:#fff}
+#list{touch-action:pan-y}
+.slide-l{animation:slideL .28s ease}
+.slide-r{animation:slideR .28s ease}
+@keyframes slideL{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
 
 /* sections & grid */
 main{padding:8px 0 140px}
@@ -188,12 +208,14 @@ footer a{color:var(--brand-d)}
 
 <header class="hero">
   <div class="wrap">
-    <div class="row">
-      <div class="logo"><div class="mark">🌷</div><div><h1>توليب</h1><small>مستلزمات تنسيق الورد</small></div></div>
-      <div class="note">الموقع قيد التجهيز، والطلب حالياً عبر الكتالوج</div>
+    <img class="logo" src="https://cdn.files.salla.network/other/530765564/44f363ea-0233-4468-a261-0faf437ad520-original.webp" alt="توليب">
+    <p class="tag">كل أدوات التنسيق في مكان واحد</p>
+    <div class="pills"><span>بسعر الجملة</span><span>جملة وتجزئة بدون حد أدنى</span><span>توصيل لكل المملكة</span></div>
+    <div class="how">
+      <div><b>١</b><strong>اختر المنتجات</strong>من الأقسام تحت</div>
+      <div><b>٢</b><strong>حدد الكمية</strong>بالزائد والناقص</div>
+      <div><b>٣</b><strong>أرسل طلبك</strong>ويوصلك عرض السعر</div>
     </div>
-    <p class="lead">اختر المنتجات والكميات اللي تبيها، وأرسل طلبك لنا بالواتساب، ويوصلك عرض السعر.</p>
-    <div class="pills"><span>بأسعار الجملة</span><span>جملة وتجزئة بدون حد أدنى</span><span>توصيل لكل المملكة</span></div>
   </div>
 </header>
 
@@ -238,11 +260,13 @@ const SB_KEY="sb_publishable_JbCEdYtVIc-Hp4LSuFRJsA_Up4_Jklo";
 const SEC_ORDER=["الورد","الفازات","التغليف","شرائط","الأدوات","ستاندات","البلونات","الشموع"];
 const SEC_ICON={"الورد":"🌹","الفازات":"🏺","التغليف":"🎁","شرائط":"🎀","الأدوات":"✂️","ستاندات":"🪴","البلونات":"🎈","الشموع":"🕯️"};
 const SEC_TITLE={"الورد":"الورد الصناعي","الأدوات":"أدوات التنسيق","ستاندات":"ستاندات وإكسسوارات"};
+const SEC_COLOR={"الورد":"#B83B5E","الفازات":"#2A7F86","التغليف":"#7A4D9B","شرائط":"#C8642A","الأدوات":"#5B6B75","ستاندات":"#7A5640","البلونات":"#3466A8","الشموع":"#A9821A"};
+const SEC_DESC={"الورد":"ورد صناعي بألوان وأطوال مختلفة","الفازات":"فازات وأواني للتنسيق","التغليف":"ورق وأكياس تغليف","شرائط":"شرائط وأشرطة تزيين","الأدوات":"أدوات وإسفنج ومستلزمات التنسيق","ستاندات":"ستاندات وإكسسوارات العرض","البلونات":"بلونات وإكسسواراتها","الشموع":"شموع وديكور"};
 const TYPES=["فرد","منسقة","محل ورد","منظم مناسبات"];
 const STATUS={new:["جديد، ننتظر الرد","st-new"],replied:["تم إرسال عرض السعر","st-replied"],sold:["تم البيع","st-sold"],cancelled:["ملغي","st-cancelled"]};
 const BASE=location.origin+location.pathname;
 
-let ITEMS=[], BY={}, SHOW_PRICES=false, WA="966505901150", CUR="all";
+let ITEMS=[], BY={}, SHOW_PRICES=false, WA="966505901150", CUR=null;
 let cart=load("tc_cart",{}), cust=load("tc_cust",{name:"",city:"",type:""}), editing=load("tc_edit",null);
 
 function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
@@ -275,14 +299,17 @@ async function init(){
 }
 function secs(){const s=[...new Set(ITEMS.map(p=>p.sec))];return s.sort((a,b)=>(SEC_ORDER.indexOf(a)+1||99)-(SEC_ORDER.indexOf(b)+1||99))}
 function buildTabs(){
-  const t=$("#tabs"); const all=secs();
-  t.innerHTML=`<button class="tab on" data-s="all">الكل <b>${num(ITEMS.length)}</b></button>`+
-    all.map(s=>`<button class="tab" data-s="${esc(s)}">${SEC_ICON[s]||"•"} ${esc(SEC_TITLE[s]||s)} <b>${num(ITEMS.filter(p=>p.sec===s).length)}</b></button>`).join("");
-  t.onclick=e=>{const b=e.target.closest(".tab");if(!b)return;CUR=b.dataset.s;
-    t.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));
-    b.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
-    renderList(); window.scrollTo({top:$("#catalogView").offsetTop,behavior:"smooth"});};
+  const t=$("#tabs"); const all=secs(); if(!CUR||!all.includes(CUR)) CUR=load("tc_sec",all[0]); if(!all.includes(CUR)) CUR=all[0];
+  t.innerHTML=all.map(s=>`<button class="tab" style="--c:${SEC_COLOR[s]||"var(--brand)"}" data-s="${esc(s)}"><i>${SEC_ICON[s]||"•"}</i><span>${esc(SEC_TITLE[s]||s)}</span><small>${num(ITEMS.filter(p=>p.sec===s).length)} منتج</small></button>`).join("");
+  t.onclick=e=>{const b=e.target.closest(".tab");if(!b)return;goSec(b.dataset.s)};
+  markTab();
 }
+function markTab(){const t=$("#tabs");t.querySelectorAll(".tab").forEach(x=>{const on=x.dataset.s===CUR&&!$("#q").value.trim();x.classList.toggle("on",on);if(on)x.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"})})}
+function goSec(s,dir){if(!s)return;const all=secs();if(!dir)dir=all.indexOf(s)>all.indexOf(CUR)?"l":"r";
+  CUR=s;save("tc_sec",s);if($("#q").value){$("#q").value=""}
+  renderList(dir);markTab();
+  const top=$("#list").getBoundingClientRect().top+window.scrollY-$(".nav").offsetHeight-6;if(window.scrollY>top)window.scrollTo({top,behavior:"smooth"})}
+function stepSec(d){const all=secs();const i=all.indexOf(CUR)+d;if(i>=0&&i<all.length)goSec(all[i],d>0?"l":"r")}
 function matches(p,q){if(!q)return true;q=q.toLowerCase();return p.name.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q)}
 function priceHTML(p){return SHOW_PRICES&&p.price!=null?`<div class="price has">${money(p.price)}</div>`:`<div class="price">السعر عند الطلب</div>`}
 function actHTML(p){const q=cart[p.sku];
@@ -292,24 +319,40 @@ function cardHTML(p){const q=cart[p.sku];
   return `<div class="card${q?" in":""}" data-sku="${esc(p.sku)}">
     <div class="ph" data-a="zoom"><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.name)}"><span class="code">${esc(p.sku)}</span>${q?`<span class="qbadge">${num(q)}</span>`:""}</div>
     <div class="body"><div class="name">${esc(p.name)}</div>${priceHTML(p)}<div class="act">${actHTML(p)}</div></div></div>`}
-function renderList(){
-  const q=$("#q").value.trim(); const L=$("#list");
-  const list=secs().filter(s=>CUR==="all"||s===CUR).map(s=>{
-    const ps=ITEMS.filter(p=>p.sec===s&&matches(p,q)); if(!ps.length) return "";
-    return `<section class="sec" id="s-${esc(s)}"><h2>${SEC_ICON[s]||""} ${esc(SEC_TITLE[s]||s)} <small>${num(ps.length)} منتج</small></h2><div class="grid">${ps.map(cardHTML).join("")}</div></section>`;
-  }).join("");
-  L.innerHTML=list||`<div class="empty">ما لقينا منتج بهالبحث. جرّب الكود مثل T-1513</div>`;
+function renderList(dir){
+  const q=$("#q").value.trim(); const L=$("#list"); const all=secs();
+  if(q){
+    const html=all.map(s=>{const ps=ITEMS.filter(p=>p.sec===s&&matches(p,q));if(!ps.length)return"";
+      return `<section class="sec"><h2>${SEC_ICON[s]||""} ${esc(SEC_TITLE[s]||s)} <small>${num(ps.length)}</small></h2><div class="grid">${ps.map(cardHTML).join("")}</div></section>`}).join("");
+    L.innerHTML=html||`<div class="empty">ما لقينا منتج بهالبحث. جرّب الكود مثل T-1513</div>`;markTab();return;
+  }
+  const s=CUR, i=all.indexOf(s), c=SEC_COLOR[s]||"var(--brand)", ps=ITEMS.filter(p=>p.sec===s);
+  const prev=all[i-1], next=all[i+1];
+  L.innerHTML=`<div class="banner" style="--c:${c}"><div class="ic">${SEC_ICON[s]||"•"}</div><div><h2>${esc(SEC_TITLE[s]||s)}</h2><p>${esc(SEC_DESC[s]||"")} · ${num(ps.length)} منتج</p></div><span class="pos">${num(i+1)} من ${num(all.length)}</span></div>
+    <p class="swipehint">اسحب يمين أو يسار للتنقل بين الأقسام</p>
+    <section class="sec" style="margin-top:12px"><div class="grid">${ps.map(cardHTML).join("")}</div></section>
+    <div class="pager">${prev?`<button style="--c:${SEC_COLOR[prev]}" data-go="${esc(prev)}" data-d="r">→ ${esc(SEC_TITLE[prev]||prev)}</button>`:""}${next?`<button class="nx" style="--c:${SEC_COLOR[next]}" data-go="${esc(next)}" data-d="l">${esc(SEC_TITLE[next]||next)} ←</button>`:""}</div>`;
+  if(dir){L.classList.remove("slide-l","slide-r");void L.offsetWidth;L.classList.add(dir==="l"?"slide-l":"slide-r")}
 }
 function refreshCard(sku){const el=document.querySelector(`.card[data-sku="${CSS.escape(sku)}"]`);if(el&&BY[sku]) el.outerHTML=cardHTML(BY[sku])}
 function setQty(sku,q){q=Math.max(0,Math.min(100000,parseInt(q)||0)); if(q) cart[sku]=q; else delete cart[sku]; save("tc_cart",cart); refreshCard(sku); updateBar(); if($("#drawer").classList.contains("show")) renderCart(true)}
-$("#list").addEventListener("click",e=>{const a=e.target.closest("[data-a]");if(!a)return;const sku=a.closest(".card").dataset.sku;
+$("#list").addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){goSec(g.dataset.go,g.dataset.d);return}
+  const a=e.target.closest("[data-a]");if(!a)return;const sku=a.closest(".card").dataset.sku;
   if(a.dataset.a==="add"){setQty(sku,1);toast("تمت الإضافة ✓")}
   else if(a.dataset.a==="inc") setQty(sku,(cart[sku]||0)+1);
   else if(a.dataset.a==="dec") setQty(sku,(cart[sku]||0)-1);
   else if(a.dataset.a==="zoom") zoom(BY[sku]);
 });
 $("#list").addEventListener("change",e=>{if(e.target.dataset.a==="set"){const sku=e.target.closest(".card").dataset.sku;setQty(sku,e.target.value)}});
-let st;$("#q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(renderList,180)});
+let st;$("#q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(()=>renderList(),180)});
+// swipe between sections (RTL: drag right = next section)
+(()=>{let x0=null,y0=0,t0=0;const L=$("#list");
+  L.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now()},{passive:true});
+  L.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+    if($("#q").value.trim())return;
+    if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.6&&Date.now()-t0<700) stepSec(dx>0?1:-1)},{passive:true});
+  document.addEventListener("keydown",e=>{if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||$("#drawer").classList.contains("show"))return;if(e.key==="ArrowLeft")stepSec(1);if(e.key==="ArrowRight")stepSec(-1)});
+})();
 
 function zoom(p){$("#lbImg").src=p.img.replace("-375x500-","-");$("#lbImg").onerror=function(){this.onerror=null;this.src=p.img};
   $("#lbCap").innerHTML=esc(p.name)+`<span>${esc(p.sku)}</span>`;$("#lb").classList.add("show")}
@@ -420,9 +463,9 @@ function printCart(c,opt){
 }
 function printCatalog(){
   const q=$("#q").value.trim();
-  const html=secs().filter(s=>CUR==="all"||s===CUR).map(s=>{const ps=ITEMS.filter(p=>p.sec===s&&matches(p,q));if(!ps.length)return"";
+  const html=(q?secs():[CUR]).map(s=>{const ps=ITEMS.filter(p=>p.sec===s&&matches(p,q));if(!ps.length)return"";
     return `<h3>${esc(SEC_TITLE[s]||s)}</h3>`+ps.map(p=>`<div><img src="${esc(p.img)}"><p><b dir="ltr">${esc(p.sku)}</b><br>${esc(p.name)}${SHOW_PRICES&&p.price!=null?"<br>"+money(p.price):""}</p></div>`).join("")}).join("");
-  $("#printout").innerHTML=`<h1>كتالوج توليب${CUR!=="all"?" · "+esc(SEC_TITLE[CUR]||CUR):""}</h1><div class="sub">مستلزمات تنسيق الورد · للطلب واتساب 0505901150</div><div class="pgrid">${html}</div>`;
+  $("#printout").innerHTML=`<h1>كتالوج توليب${q?"":" · "+esc(SEC_TITLE[CUR]||CUR)}</h1><div class="sub">مستلزمات تنسيق الورد · للطلب واتساب 0505901150</div><div class="pgrid">${html}</div>`;
   toast("جاري تجهيز الملف… اختر «حفظ كملف PDF»");
   afterImages(()=>window.print());
 }
@@ -436,7 +479,7 @@ let QUOTE=null,QEDIT={};
 function route(){
   const m=location.hash.match(/^#q=([0-9a-f-]{36})$/i);
   $("#catalogView").classList.toggle("hidden",!!m);$("#quoteView").classList.toggle("hidden",!m);
-  $("#bar").style.display=m?"none":"";
+  $("#bar").style.display=m?"none":"";document.body.classList.toggle("quote",!!m);
   if(m){closeCart();loadQuote(m[1])}else{QUOTE=null}
 }
 async function loadQuote(token){
@@ -461,12 +504,12 @@ function renderQuote(){
   </div>
   <div class="qlist">${ks.length?ks.map(k=>{const p=L[k];return lineHTML(p,QEDIT[k],P?P[k]:null)}).join(""):'<div class="empty">حذفت كل المنتجات. احفظ أو أضف منتجات.</div>'}</div>
   <div class="tot" style="margin-top:6px"><span>${num(ks.length)} منتج · ${num(pcs)} قطعة</span>${all&&ks.length?`<b>الإجمالي: ${money(sum)}</b>`:P?`<span>بعض الأسعار ناقصة</span>`:`<span>السعر يوصلك بالعرض</span>`}</div>
-  <div class="sticky-save">${open?`<button class="primary wa" style="width:100%" id="qSave" ${changed&&ks.length?"":"disabled"}>${changed?"حفظ التعديل وإرساله بالواتساب":"ما فيه تعديلات"}</button>`:""}
+  ${open&&changed?`<div class="sticky-save"><button class="primary wa" style="width:100%" id="qSave" ${ks.length?"":"disabled"}>حفظ التعديل وإرساله بالواتساب</button></div>`:""}
     <div class="qactions" style="margin-top:8px">
       ${open?`<button class="ghost" id="qAdd">＋ أضف منتجات من الكتالوج</button>`:""}
       <button class="ghost" id="qDl">⬇︎ تحميل الطلب</button>
       <a class="ghost" style="text-decoration:none;text-align:center" href="https://wa.me/${WA}?text=${encodeURIComponent("استفسار عن طلب رقم #"+q.id)}" target="_blank" rel="noopener">تواصل معنا</a>
-    </div></div>`;
+    </div>`;
   if(open){
     const ql=$(".qlist");
     ql.onclick=e=>{const a=e.target.closest("[data-a]");if(!a)return;const sku=a.closest(".line").dataset.sku;
