@@ -115,6 +115,13 @@ main{padding:8px 0 140px}
 .wa:hover{background:#178c46}
 .ghost{color:var(--ink);border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 14px;font-weight:500;font-size:14px}
 
+.fly{position:fixed;z-index:80;object-fit:cover;pointer-events:none;box-shadow:0 8px 24px rgba(60,30,20,.25)}
+.flyplus{direction:ltr;position:fixed;z-index:80;width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;font-weight:700;font-size:14px;display:grid;place-items:center;pointer-events:none;box-shadow:0 4px 12px rgba(60,30,20,.3)}
+.bar.bump #openCart{animation:pop .45s ease}
+.bar.bump .sum b{animation:pulse .45s ease;display:inline-block}
+@keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.12)}70%{transform:scale(.96)}100%{transform:scale(1)}}
+@keyframes pulse{0%{transform:scale(1);color:inherit}40%{transform:scale(1.25);color:var(--brand)}100%{transform:scale(1)}}
+
 /* drawer */
 .dim{position:fixed;inset:0;background:rgba(30,15,10,.45);z-index:40;opacity:0;pointer-events:none;transition:.2s}
 .dim.show{opacity:1;pointer-events:auto}
@@ -338,8 +345,8 @@ function refreshCard(sku){const el=document.querySelector(`.card[data-sku="${CSS
 function setQty(sku,q){q=Math.max(0,Math.min(100000,parseInt(q)||0)); if(q) cart[sku]=q; else delete cart[sku]; save("tc_cart",cart); refreshCard(sku); updateBar(); if($("#drawer").classList.contains("show")) renderCart(true)}
 $("#list").addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){goSec(g.dataset.go,g.dataset.d);return}
   const a=e.target.closest("[data-a]");if(!a)return;const sku=a.closest(".card").dataset.sku;
-  if(a.dataset.a==="add"){setQty(sku,1);toast("تمت الإضافة ✓")}
-  else if(a.dataset.a==="inc") setQty(sku,(cart[sku]||0)+1);
+  if(a.dataset.a==="add"){const card=a.closest(".card");flyImg(card.querySelector(".ph img"));setQty(sku,1)}
+  else if(a.dataset.a==="inc"){flyPlus(a);setQty(sku,(cart[sku]||0)+1)}
   else if(a.dataset.a==="dec") setQty(sku,(cart[sku]||0)-1);
   else if(a.dataset.a==="zoom") zoom(BY[sku]);
 });
@@ -359,6 +366,29 @@ function zoom(p){$("#lbImg").src=p.img.replace("-375x500-","-");$("#lbImg").oner
 $("#lb").onclick=()=>$("#lb").classList.remove("show");
 
 function totals(c){const ks=Object.keys(c);let pcs=0,sum=0,allPriced=SHOW_PRICES;ks.forEach(k=>{pcs+=c[k];const p=BY[k];if(SHOW_PRICES&&p&&p.price!=null) sum+=p.price*c[k]; else allPriced=false});return{n:ks.length,pcs,sum,allPriced}}
+/* add-to-order animations */
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function barTarget(){const b=$("#openCart").getBoundingClientRect();return{x:b.left+b.width/2,y:b.top+b.height/2}}
+function bump(){const b=$("#bar");b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump")}
+function flyImg(img){
+  if(RM||!img){bump();return}
+  const r=img.getBoundingClientRect(),wasHidden=!$("#bar").classList.contains("show");
+  const go=()=>{const t=barTarget();const c=img.cloneNode();c.className="fly";
+    Object.assign(c.style,{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px"});document.body.appendChild(c);
+    const dx=t.x-(r.left+r.width/2),dy=t.y-(r.top+r.height/2);
+    c.animate([{transform:"translate(0,0) scale(1)",opacity:1,borderRadius:"14px"},
+               {transform:`translate(${dx*.35}px,${dy*.25-60}px) scale(.55)`,opacity:1,borderRadius:"30px",offset:.35},
+               {transform:`translate(${dx}px,${dy}px) scale(.08)`,opacity:.6,borderRadius:"50%"}],
+      {duration:650,easing:"cubic-bezier(.5,0,.75,.4)"}).onfinish=()=>{c.remove();bump()}};
+  wasHidden?setTimeout(go,260):go();
+}
+function flyPlus(btn){
+  if(RM){bump();return}
+  const r=btn.getBoundingClientRect(),t=barTarget();const d=document.createElement("div");d.className="flyplus";d.textContent="+1";
+  Object.assign(d.style,{left:(r.left+r.width/2-16)+"px",top:(r.top-4)+"px"});document.body.appendChild(d);
+  d.animate([{transform:"translate(0,0) scale(1)",opacity:1},{transform:"translate(0,-22px) scale(1.25)",opacity:1,offset:.25},
+             {transform:`translate(${t.x-r.left-r.width/2}px,${t.y-r.top}px) scale(.6)`,opacity:.3}],{duration:560,easing:"ease-in"}).onfinish=()=>{d.remove();bump()};
+}
 function updateBar(){const t=totals(cart);$("#bar").classList.toggle("show",t.n>0);
   $("#barCount").textContent=num(t.n)+" منتج"+(editing?` · تعديل طلب #${editing.id}`:"");
   $("#barSub").textContent=num(t.pcs)+" قطعة"+(t.allPriced&&t.n?" · "+money(t.sum):"")}
