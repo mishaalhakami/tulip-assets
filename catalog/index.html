@@ -440,13 +440,13 @@ function renderCart(keepForm){
   ["fName","fCity","fNote"].forEach(id=>$("#"+id).addEventListener("input",()=>{const f=readForm();cust={...cust,...f};save("tc_cust",cust)}));
   $("#cartFoot").innerHTML=`<div class="tot"><span>${num(t.n)} منتج · ${num(t.pcs)} قطعة</span>${t.allPriced?`<b>${money(t.sum)}</b>`:`<span>السعر يوصلك بالعرض</span>`}</div>
     <button class="primary wa" style="width:100%" id="send">${editing?`حفظ التعديل وإرساله بالواتساب`:`اطلب عرض سعر عبر واتساب`}</button>
-    <div class="row2" style="margin-top:8px"><button class="ghost" id="dlCart">⬇︎ تحميل الطلب</button><button class="ghost" id="clr">تفريغ الطلب</button></div>
+    <div class="row2" style="margin-top:8px"><button class="ghost" id="dlCart">⬇︎ تحميل الطلب</button><button class="ghost" id="clr">حذف كامل الطلب</button></div>
     <div class="mini">بعد الإرسال يوصلك رابط تقدر تعدّل فيه طلبك</div>`;
   $("#send").onclick=submit;$("#dlCart").onclick=()=>printCart(cart,{title:"ملخص الطلب"});
   $("#clr").onclick=()=>{if(confirmClear()){const ks2=Object.keys(cart);cart={};save("tc_cart",cart);ks2.forEach(refreshCard);updateBar();renderCart()}};
   bindEdit();
 }
-let clearArmed=0;function confirmClear(){if(Date.now()-clearArmed<3000)return true;clearArmed=Date.now();toast("اضغط «تفريغ الطلب» مرة ثانية للتأكيد");return false}
+let clearArmed=0;function confirmClear(){if(Date.now()-clearArmed<3000)return true;clearArmed=Date.now();toast("اضغط «حذف كامل الطلب» مرة ثانية للتأكيد");return false}
 function editHint(){return `<div class="edithint"><span>أنت تعدّل طلب رقم #${editing.id}</span><button class="ghost" style="padding:5px 10px" id="cancelEdit">طلب جديد بدلاً منه</button></div>`}
 function bindEdit(){const b=$("#cancelEdit");if(b)b.onclick=()=>{editing=null;save("tc_edit",null);updateBar();renderCart(true)}}
 function readForm(){return{name:($("#fName")||{}).value||"",city:($("#fCity")||{}).value||"",note:($("#fNote")||{}).value||""}}
