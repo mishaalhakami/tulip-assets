@@ -200,7 +200,7 @@ main{padding-block:12px 60px}
           <option value="">كل الأكواد</option>
           <option value="له صور في الدرايف">له صور في الدرايف</option>
           <option value="بدون صور نهائياً">بدون صور نهائياً</option>
-          <option value="في المتجر">في المتجر</option>
+          <option value="في المتجر">في الموقع</option>
         </select>
         <select id="fFlag" aria-label="فلتر إضافي">
           <option value="">بدون فلتر إضافي</option>
@@ -229,7 +229,7 @@ const SB_URL = "https://prbckhglaodviiyhwwum.supabase.co";
 const SB_KEY = "sb_publishable_JbCEdYtVIc-Hp4LSuFRJsA_Up4_Jklo";
 const SEC_ORDER = ["الورد","الفازات","التغليف","شرائط","الأدوات","ستاندات","البلونات","الشموع"];
 const FB = ["الفازات","ستاندات","الشموع","البلونات","التغليف"];
-const STAGE = {todo:"لم يبدأ",shooting:"قيد التصوير",photo_review:"صور بانتظار المراجعة",design:"عند المصمم",design_review:"تصميم بانتظار المراجعة",ready:"جاهز للرفع",live:"مرفوع على المتجر"};
+const STAGE = {todo:"لم يبدأ",shooting:"قيد التصوير",photo_review:"صور بانتظار المراجعة",design:"عند المصمم",design_review:"تصميم بانتظار المراجعة",ready:"جاهز للرفع",live:"مرفوع على الموقع"};
 const ROLE = {admin:"المدير",photographer:"المصور",designer:"المصمم",shop:"موظف المحل"};
 const SPEC = {
  "الورد":{main:"الباقة كاملة واقفة، وجهها للكاميرا",angle:"من الجنب ومن فوق",size:"الباقة جنب المسطرة طولياً، ويبان عدد الرؤوس",detail:"البتلات والأوراق عن قرب",use:"داخل فازة أو باقة مغلفة"},
@@ -335,7 +335,7 @@ function bucket(c){
 const BLABEL = {
   photographer:{red:"باقي بدون صور",amber:"قيد التصوير أو المراجعة",green:"صوره معتمدة"},
   designer:{red:"ينتظر تصميمك",amber:"قيد التصميم أو المراجعة",green:"خلص"},
-  admin:{red:"لم يبدأ",amber:"قيد العمل",green:"جاهز أو مرفوع"}
+  admin:{red:"لم يبدأ",amber:"قيد التصوير أو المراجعة",green:"معتمد أو مرفوع"}
 };
 const bl = b => (BLABEL[ME.role]||BLABEL.photographer)[b];
 
@@ -460,16 +460,16 @@ async function refreshDetail(){
   if((role==="photographer"||role==="shop")&&["todo","shooting"].includes(c.stage)) act.push(`<button class="btn primary" data-stage="photo_review" ${ph.length?"":"disabled"}>أرسل الصور للمراجعة</button>`);
   if(role==="designer"&&c.stage==="design") act.push(`<button class="btn primary" data-stage="design_review" ${ds.length?"":"disabled"}>أرسل التصميم للمراجعة</button>`);
   if(admin){
-    if(c.stage==="photo_review"){act.push(`<button class="btn ok" data-stage="design">اعتماد الصور ← للمصمم</button>`,`<button class="btn warn" data-ret="shooting">إرجاع للمصور</button>`)}
+    if(c.stage==="photo_review"){act.push(`<button class="btn ok" data-stage="ready">اعتماد الصور ← جاهز للرفع</button>`,`<button class="btn warn" data-ret="shooting">إرجاع للمصور</button>`)}
     if(c.stage==="design_review"){act.push(`<button class="btn ok" data-stage="ready">اعتماد التصميم ← جاهز للرفع</button>`,`<button class="btn warn" data-ret="design">إرجاع للمصمم</button>`)}
-    act.push(`<select id="stageSel" aria-label="تغيير المرحلة">${Object.entries(STAGE).map(([k,l])=>`<option value="${k}" ${c.stage===k?"selected":""}>${l}</option>`).join("")}</select>`,
+    act.push(`<select id="stageSel" aria-label="تغيير المرحلة">${Object.entries(STAGE).filter(([k])=>!["design","design_review"].includes(k)||c.stage===k).map(([k,l])=>`<option value="${k}" ${c.stage===k?"selected":""}>${l}</option>`).join("")}</select>`,
              `<select id="priSel" aria-label="الأولوية">${[1,2,3].map(p=>`<option value="${p}" ${c.priority===p?"selected":""}>أولوية ${AR(p)}</option>`).join("")}</select>`);
   }
   $("detail").innerHTML = `
   <div class="dhead" style="--sc:${sst(c.sec).c}"><div class="wrap"><button class="btn" id="back">← رجوع</button><span style="font-size:1.3rem">${sst(c.sec).i}</span><span class="code" style="font-size:1.15rem;color:${sst(c.sec).c}">${esc(c.code)}</span><span class="pill st-${c.stage}">${STAGE[c.stage]}</span></div></div>
   <div class="wrap dbody">
     <div class="box"><h3>${esc(c.name)}</h3>
-      <div class="kv"><span>القسم: ${esc(c.sec)}</span><span>الوضع: ${esc(c.grp)}</span>${c.qty!=null?`<span>الكمية: ${AR(c.qty)}</span>`:""}<span>صور المتجر الحالية: ${AR(c.store_imgs)}</span><span>أولوية ${AR(c.priority)}</span></div>
+      <div class="kv"><span>القسم: ${esc(c.sec)}</span><span>الوضع: ${esc(String(c.grp).replace("المتجر","الموقع"))}</span>${c.qty!=null?`<span>الكمية: ${AR(c.qty)}</span>`:""}<span>صور الموقع الحالية: ${AR(c.store_imgs)}</span><span>أولوية ${AR(c.priority)}</span></div>
       ${c.returned_note?`<div class="retnote"><b>مرجّع:</b> ${esc(c.returned_note)}</div>`:""}
       ${c.needs&&c.needs.length?`<div><b>المطلوب في هذا الكود</b><ul class="needs">${c.needs.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`:""}
       ${c.questions&&c.questions.length?`<div class="qs"><b>سؤال معلّق:</b> ${c.questions.map(esc).join("<br>")}<br><small>الجواب يُكتب في المحادثة تحت.</small></div>`:""}
@@ -477,10 +477,7 @@ async function refreshDetail(){
       ${act.length?`<div class="actions">${act.join("")}</div>`:""}
     </div>
     ${role!=="designer"||ph.length?`<div class="box"><h3>صور المصور</h3>${role==="designer"?`<div class="thumbs">${ph.map(f=>thumb(f,false)).join("")}</div>`:slots}</div>`:""}
-    ${role!=="photographer"&&role!=="shop"?`<div class="box"><h3>شغل المصمم</h3>
-      <details><summary style="cursor:pointer;color:var(--accent)">برومت تعديل الصور (انسخه لأداة التعديل)</summary><div class="prompt" id="pEn">${esc(pr.en)}</div><button class="btn" data-copy="pEn">نسخ البرومت</button></details>
-      <details><summary style="cursor:pointer;color:var(--accent)">محتوى بطاقة المعلومات</summary><div class="prompt ar" id="pCard">${esc(pr.card)}</div><button class="btn" data-copy="pCard">نسخ</button></details>
-      ${dslots}</div>`:""}
+    
     <div class="box"><h3>المحادثة</h3>
       <div class="chat">${msgs.length?msgs.map(m=>`<div class="msg${m.by===ME.name?" me":""}"><small>${esc(m.by||"")} · ${esc(ROLE[m.role]||"")} · ${new Date(m.at).toLocaleString("ar-SA",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</small>${esc(m.body)}</div>`).join(""):`<p class="muted" style="margin:0">ما فيه رسائل. اكتب ملاحظة أو جواب سؤال.</p>`}</div>
       <div class="send"><textarea id="msgIn" placeholder="اكتب رسالة عن هذا الكود" aria-label="رسالة"></textarea><button class="btn primary" id="msgSend">إرسال</button></div>
@@ -553,7 +550,7 @@ async function openTeam(){
   T.innerHTML=`<div class="dhead"><div class="wrap"><button class="btn" id="tBack">← رجوع</button><h2 style="font-size:1.1rem">الفريق والإعدادات</h2></div></div>
   <div class="wrap dbody">
     <div class="box"><h3>أعضاء الفريق</h3>${list.map(m=>`<div class="team-row"><b>${esc(m.name)}</b><span class="tag">${ROLE[m.role]}</span><span class="muted">${m.active?"فعّال":"موقوف"}</span>${m.name!==ME.name||m.role!=="admin"?`<button class="btn" data-toggle="${m.id}" data-active="${m.active?0:1}" style="margin-inline-start:auto">${m.active?"إيقاف":"تفعيل"}</button>`:""}</div>`).join("")}</div>
-    <div class="box"><h3>إضافة عضو</h3><div class="form"><input id="nName" placeholder="الاسم"><select id="nRole"><option value="photographer">المصور</option><option value="designer">المصمم</option><option value="shop">موظف المحل</option><option value="admin">مدير</option></select><input id="nPin" inputmode="numeric" maxlength="6" placeholder="رمز ٦ أرقام"><button class="btn primary" id="nAdd">إضافة</button></div>
+    <div class="box"><h3>إضافة عضو</h3><div class="form"><input id="nName" placeholder="الاسم"><select id="nRole"><option value="photographer">المصور</option><option value="shop">موظف المحل</option><option value="admin">مدير</option></select><input id="nPin" inputmode="numeric" maxlength="6" placeholder="رمز ٦ أرقام"><button class="btn primary" id="nAdd">إضافة</button></div>
       <p class="muted" style="margin:0;font-size:.85rem">أعط الشخص رابط الصفحة ورمزه. كل رمز يفتح شاشة صاحبه بس.</p></div>
     <div class="box"><h3>رمزي</h3><div class="form"><input id="myPin" inputmode="numeric" maxlength="6" placeholder="رمز جديد ٦ أرقام"><button class="btn" id="myPinBtn">تغيير رمزي</button></div></div>
     <div class="box"><h3>رابط سكربت الرفع للدرايف</h3><div class="form"><input id="upUrl" dir="ltr" value="${esc(SETTINGS.upload_url||"")}" placeholder="https://script.google.com/macros/s/.../exec"><button class="btn" id="upSave">حفظ</button></div></div>
