@@ -154,6 +154,9 @@ main{padding:8px 0 140px}
 .drawer.show{transform:none}
 .dh{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:#fff}
 .dh h3{margin:0;font-family:var(--hfont);font-size:18px}
+.dhact{display:flex;gap:8px;align-items:center}
+.cont{border:1px solid var(--brand);background:#fff;color:var(--brand-d);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600}
+.cont:hover{background:var(--brand-xl)}
 .x{border:0;background:var(--brand-xl);width:36px;height:36px;border-radius:10px;font-size:18px}
 .db{flex:1;overflow:auto;padding:12px 16px}
 .df{border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff}
@@ -278,7 +281,7 @@ footer a{color:var(--brand-d)}
 
 <div class="dim" id="dim"></div>
 <aside class="drawer" id="drawer" aria-label="ملخص الطلب">
-  <div class="dh"><h3>ملخص طلبك</h3><button class="x" id="closeCart" aria-label="إغلاق">✕</button></div>
+  <div class="dh"><h3>ملخص طلبك</h3><div class="dhact"><button class="cont" id="contShop">→ إكمال التسوق</button><button class="x" id="closeCart" aria-label="إغلاق">✕</button></div></div>
   <div class="db" id="cartBody"></div>
   <div class="df" id="cartFoot"></div>
 </aside>
@@ -426,7 +429,7 @@ function updateBar(){const t=totals(cart);$("#bar").classList.toggle("show",t.n>
 /* ---------- drawer ---------- */
 function openCart(){renderCart();$("#drawer").classList.add("show");$("#dim").classList.add("show")}
 function closeCart(){$("#drawer").classList.remove("show");$("#dim").classList.remove("show")}
-$("#openCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#dim").onclick=closeCart;
+$("#openCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#contShop").onclick=closeCart;$("#dim").onclick=closeCart;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeCart();$("#lb").classList.remove("show")}});
 
 function lineHTML(p,q,priceOverride){
