@@ -226,8 +226,27 @@ main{padding:8px 0 140px}
 .mini{font-size:12.5px;color:var(--muted);text-align:center;margin-top:8px}
 .edithint{background:#FFF6E5;border:1px solid #F1D9A8;color:#7A4E00;border-radius:12px;padding:9px 12px;font-size:13.5px;margin-bottom:10px;display:flex;gap:8px;align-items:center;justify-content:space-between}
 
+/* product sheet */
+.name[data-a]{cursor:pointer}
+.sdim{position:fixed;inset:0;background:rgba(30,15,10,.45);z-index:50;opacity:0;pointer-events:none;transition:.2s}
+.sdim.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:51;left:0;right:0;bottom:0;max-height:92vh;overflow:auto;background:var(--bg);border-radius:22px 22px 0 0;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);padding-bottom:calc(14px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(60,30,20,.15)}
+.sheet.show{transform:none}
+@media(min-width:700px){.sheet{left:50%;right:auto;width:440px;bottom:auto;top:50%;border-radius:22px;transform:translate(-50%,-40%) scale(.96);opacity:0;pointer-events:none;transition:.22s}.sheet.show{transform:translate(-50%,-50%);opacity:1;pointer-events:auto}.grab{display:none}}
+.grab{width:42px;height:5px;border-radius:9px;background:var(--line);margin:8px auto 0}
+.shx{position:absolute;top:12px;left:12px;z-index:2;background:rgba(255,255,255,.9)}
+.shimg{position:relative;width:min(calc(100% - 32px),39vh);margin:10px auto 0;border-radius:18px;overflow:hidden;background:var(--brand-xl);aspect-ratio:3/4;cursor:zoom-in}
+.shimg img{width:100%;height:100%;object-fit:contain}
+.zhint{position:absolute;bottom:8px;left:8px;background:rgba(255,255,255,.88);border-radius:8px;padding:2px 8px;font-size:11.5px;color:var(--muted)}
+.shb{padding:12px 18px 0;display:flex;flex-direction:column;gap:8px}
+.shsec{align-self:flex-start;font-size:12.5px;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--c) 10%,#fff);border-radius:999px;padding:2px 10px}
+.shb h3{margin:0;font-family:var(--hfont);font-size:18px;line-height:1.55;font-weight:600}
+.shact .add,.shact .step{height:46px}
+.shact .step button{height:46px;width:52px}
+.shact .step input{height:46px;font-size:17px}
+
 /* lightbox */
-.lb{position:fixed;inset:0;z-index:60;background:rgba(20,10,8,.9);display:none;align-items:center;justify-content:center;padding:20px;flex-direction:column;gap:12px}
+.lb{position:fixed;inset:0;z-index:70;background:rgba(20,10,8,.9);display:none;align-items:center;justify-content:center;padding:20px;flex-direction:column;gap:12px}
 .lb.show{display:flex}
 .lb img{max-height:78vh;border-radius:12px}
 .lb .cap{color:#fff;text-align:center;font-size:15px}
@@ -325,6 +344,8 @@ footer a{color:var(--brand-d)}
   <div class="df" id="cartFoot"></div>
 </aside>
 
+<div class="sdim" id="sdim"></div>
+<section class="sheet" id="sheet" aria-label="تفاصيل المنتج"></section>
 <div class="lb" id="lb"><img id="lbImg" alt=""><div class="cap" id="lbCap"></div></div>
 <div class="toast" id="toast"></div>
 <div class="printout" id="printout"></div>
@@ -411,8 +432,8 @@ function actHTML(p){const q=cart[p.sku];
           :`<button class="add" data-a="add">أضف للطلب</button>`}
 function cardHTML(p){const q=cart[p.sku];
   return `<div class="card${q?" in":""}" data-sku="${esc(p.sku)}">
-    <div class="ph" data-a="zoom"><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.name)}"><span class="code">${esc(p.sku)}</span>${q?`<span class="qbadge">${num(q)}</span>`:""}</div>
-    <div class="body"><div class="name">${esc(p.name)}</div>${unitHTML(p.unit)}${priceHTML(p)}<div class="act">${actHTML(p)}</div></div></div>`}
+    <div class="ph" data-a="open"><img loading="lazy" src="${esc(p.img)}" alt="${esc(p.name)}"><span class="code">${esc(p.sku)}</span>${q?`<span class="qbadge">${num(q)}</span>`:""}</div>
+    <div class="body"><div class="name" data-a="open">${esc(p.name)}</div>${unitHTML(p.unit)}${priceHTML(p)}<div class="act">${actHTML(p)}</div></div></div>`}
 function renderList(dir){
   const q=$("#q").value.trim(); const L=$("#list"); const all=secs();
   if(q){
@@ -446,14 +467,14 @@ function applyFx(){if(!FX)return;const {sku,d}=FX;FX=null;const sel=`[data-sku="
   document.querySelectorAll(".line"+sel).forEach(l=>{l.classList.remove("flash");void l.offsetWidth;l.classList.add("flash")});
   document.querySelectorAll(".tot").forEach(t=>{t.classList.remove("pulse");void t.offsetWidth;t.classList.add("pulse")})}
 function removeLine(ln,cb){if(RM){cb();return}ln.classList.add("out");setTimeout(cb,260)}
-function setQty(sku,q){q=Math.max(0,Math.min(100000,parseInt(q)||0));if(q&&!cart[sku])LAST_ADDED=sku; if(q) cart[sku]=q; else delete cart[sku]; save("tc_cart",cart); refreshCard(sku); updateBar(); if($("#drawer").classList.contains("show")) renderCart(true); applyFx()}
+function setQty(sku,q){q=Math.max(0,Math.min(100000,parseInt(q)||0));if(q&&!cart[sku])LAST_ADDED=sku; if(q) cart[sku]=q; else delete cart[sku]; save("tc_cart",cart); refreshCard(sku); updateBar(); if($("#drawer").classList.contains("show")) renderCart(true); if(SHEET) renderSheet(); else applyFx()}
 $("#list").addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){goSec(g.dataset.go,g.dataset.d);return}
   const sb=e.target.closest("[data-sub]");if(sb){SUB=SUB===sb.dataset.sub?null:sb.dataset.sub;renderList();const L=$("#list"),t=L.querySelector(".subs");if(t){const y=t.getBoundingClientRect().top+scrollY-$(".nav").offsetHeight-8;if(scrollY>y)scrollTo({top:y,behavior:"smooth"})}return}
   const a=e.target.closest("[data-a]");if(!a)return;const sku=a.closest(".card").dataset.sku;
   if(a.dataset.a==="add"){const card=a.closest(".card");flyImg(card.querySelector(".ph img"));setQty(sku,1)}
   else if(a.dataset.a==="inc"){flyPlus(a);markFx(sku,1);setQty(sku,(cart[sku]||0)+1)}
   else if(a.dataset.a==="dec"){markFx(sku,-1,a);setQty(sku,(cart[sku]||0)-1)}
-  else if(a.dataset.a==="zoom") zoom(BY[sku]);
+  else if(a.dataset.a==="open") openProd(sku);
 });
 $("#list").addEventListener("change",e=>{if(e.target.dataset.a==="set"){const sku=e.target.closest(".card").dataset.sku;setQty(sku,e.target.value)}});
 let st;$("#q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(()=>renderList(),180)});
@@ -469,6 +490,35 @@ let st;$("#q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(()=>
 function zoom(p){$("#lbImg").src=p.img.replace("-375x500-","-");$("#lbImg").onerror=function(){this.onerror=null;this.src=p.img};
   $("#lbCap").innerHTML=esc(p.name)+`<span>${esc(p.sku)}</span>`;$("#lb").classList.add("show")}
 $("#lb").onclick=()=>$("#lb").classList.remove("show");
+/* product sheet */
+let SHEET=null;
+function bigImg(u){return String(u||"").replace("-375x500-","-")}
+function openProd(sku){const p=BY[sku];if(!p)return;SHEET=sku;renderSheet();
+  $("#sheet").classList.add("show");$("#sdim").classList.add("show");document.body.style.overflow="hidden"}
+function closeProd(){SHEET=null;$("#sheet").classList.remove("show");$("#sdim").classList.remove("show");document.body.style.overflow=""}
+function renderSheet(){if(!SHEET)return;const p=BY[SHEET],q=cart[SHEET];
+  $("#sheet").innerHTML=`<div class="grab"></div><button class="x shx" data-a="close" aria-label="إغلاق">✕</button>
+   <div class="shimg" data-a="zoom"><img src="${esc(bigImg(p.img))}" onerror="this.onerror=null;this.src='${esc(p.img)}'" alt="${esc(p.name)}"><span class="code">${esc(p.sku)}</span><span class="zhint">🔍 اضغط للتكبير</span></div>
+   <div class="shb" data-sku="${esc(p.sku)}">
+     <div class="shsec" style="--c:${SEC_COLOR[p.sec]||"var(--brand)"}">${SEC_ICON[p.sec]||""} ${esc(SEC_TITLE[p.sec]||p.sec)}</div>
+     <h3>${esc(p.name)}</h3>
+     ${unitHTML(p.unit)}
+     ${priceHTML(p)}
+     <div class="shact">${q?`<div class="step"><button data-a="inc" aria-label="زيادة">+</button><input type="number" inputmode="numeric" min="1" value="${q}" data-a="set" aria-label="الكمية"><button data-a="dec" aria-label="نقص">−</button></div>`:`<button class="add" data-a="add">أضف للطلب</button>`}</div>
+     ${q?`<button class="ghost" style="width:100%;margin-top:8px" data-a="cart">عرض الطلب (${num(Object.keys(cart).length)} منتج) ←</button>`:""}
+   </div>`;
+  applyFx()}
+$("#sdim").onclick=closeProd;
+$("#sheet").addEventListener("click",e=>{const a=e.target.closest("[data-a]");if(!a)return;const k=SHEET;
+  if(a.dataset.a==="close")return closeProd();
+  if(a.dataset.a==="zoom")return zoom(BY[k]);
+  if(a.dataset.a==="cart"){closeProd();return openCart()}
+  if(a.dataset.a==="add"){flyImg($("#sheet .shimg img"));setQty(k,1)}
+  else if(a.dataset.a==="inc"){flyPlus(a);markFx(k,1);setQty(k,(cart[k]||0)+1)}
+  else if(a.dataset.a==="dec"){markFx(k,-1,a);setQty(k,(cart[k]||0)-1)}});
+$("#sheet").addEventListener("change",e=>{if(e.target.dataset.a==="set")setQty(SHEET,e.target.value)});
+(()=>{let y0=null;const S=$("#sheet");S.addEventListener("touchstart",e=>{y0=S.scrollTop<=0?e.touches[0].clientY:null},{passive:true});
+  S.addEventListener("touchend",e=>{if(y0!==null&&e.changedTouches[0].clientY-y0>90)closeProd();y0=null},{passive:true})})();
 
 function totals(c){const ks=Object.keys(c);let pcs=0,sum=0,allPriced=SHOW_PRICES;ks.forEach(k=>{pcs+=c[k];const p=BY[k];if(SHOW_PRICES&&p&&p.price!=null) sum+=p.price*c[k]; else allPriced=false});return{n:ks.length,pcs,sum,allPriced}}
 /* add-to-order animations */
@@ -508,7 +558,7 @@ function renderStrip(){const st=$("#strip");if(!st)return;const ks=Object.keys(c
 function openCart(){renderCart();$("#drawer").classList.add("show");$("#dim").classList.add("show")}
 function closeCart(){$("#drawer").classList.remove("show");$("#dim").classList.remove("show")}
 $("#openCart").onclick=openCart;$("#strip").onclick=e=>{if(e.target.closest(".th"))openCart()};$("#closeCart").onclick=closeCart;$("#contShop").onclick=closeCart;$("#dim").onclick=closeCart;
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeCart();$("#lb").classList.remove("show")}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(SHEET)closeProd();closeCart();$("#lb").classList.remove("show")}});
 
 function lineHTML(p,q,priceOverride){
   const pr=priceOverride!=null?Number(priceOverride):(SHOW_PRICES&&p.price!=null?p.price:null);
