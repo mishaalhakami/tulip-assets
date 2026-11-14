@@ -504,11 +504,21 @@ $("#cartBody").addEventListener("click",e=>{const a=e.target.closest("[data-a]")
   else if(a.dataset.a==="del"){removeLine(ln,()=>{setQty(sku,0);toast("انحذف من الطلب")})}});
 $("#cartBody").addEventListener("change",e=>{if(e.target.dataset.a==="set"){const sku=e.target.closest(".line").dataset.sku;setQty(sku,e.target.value)}});
 
+function buildMsg(o){ // o:{edit,id,name,city,type,note,list:[{sku,name,qty}],link}
+  const SEP="━━━━━━━━━━━━━━";const pcs=o.list.reduce((a,x)=>a+x.qty,0);
+  const out=[o.edit?"✏️ *تعديل طلب عرض سعر | توليب*":"🌷 *طلب عرض سعر | توليب*",`رقم الطلب: *#${o.id}*`,SEP,
+    `👤 الاسم: ${o.name}`,`📍 المدينة: ${o.city}`];
+  if(o.type) out.push(`🏷️ نوع العميل: ${o.type}`);
+  out.push(SEP,`🛒 *المنتجات* (${o.list.length} منتج • ${pcs} قطعة)`,"");
+  o.list.forEach((x,i)=>{out.push(`*${i+1}. ${x.name}*`,`الكود: ${x.sku}`,`الكمية: *${x.qty}*`,"")});
+  out.push(SEP);
+  if(o.note) out.push(`📝 ملاحظة: ${o.note}`,"");
+  out.push("📄 *تفاصيل الطلب بالصور وتعديله:*",o.link);
+  return out.join("\n");
+}
 function waText(head,id,c,link){
-  const ks=Object.keys(c);const t=totals(c);
-  return [head+` رقم #${id}`,`الاسم: ${cust.name}`,`المدينة: ${cust.city}`,cust.type?`نوع العميل: ${cust.type}`:null,"",
-    ...ks.map((k,i)=>`${i+1}) ${k} — ${BY[k]?BY[k].name:""} × ${c[k]}`),"",
-    `المجموع: ${t.n} منتج / ${t.pcs} قطعة`,cust.note?`ملاحظة: ${cust.note}`:null,"",`رابط الطلب والتعديل:`,link].filter(x=>x!==null).join("\n");
+  return buildMsg({edit:head.startsWith("تعديل"),id,name:cust.name,city:cust.city,type:cust.type,note:cust.note,
+    list:Object.keys(c).map(k=>({sku:k,name:BY[k]?BY[k].name:"",qty:c[k]})),link});
 }
 async function submit(){
   const f=readForm();cust={...cust,...f};save("tc_cust",cust);const err=$("#fErr");
@@ -628,8 +638,9 @@ async function saveQuote(){
   try{const items=Object.keys(QEDIT).map(k=>({sku:k,qty:QEDIT[k]}));
     const r=await rpc("cat_quote_update",{p_token:QUOTE.token,p_items:items});
     if(r&&r.error){toast(r.error==="locked"?"الطلب مقفل للتعديل":"ما انحفظ، جرّب مرة ثانية");b.disabled=false;return}
-    const L=qLookup();const lines=Object.keys(QEDIT).map((k,i)=>`${i+1}) ${k} — ${L[k].name} × ${QEDIT[k]}`);
-    const msg=[`تعديل طلب عرض سعر رقم #${QUOTE.id}`,`الاسم: ${QUOTE.name}`,"",...lines,"","رابط الطلب:",BASE+"#q="+QUOTE.token].join("\n");
+    const L=qLookup();
+    const msg=buildMsg({edit:true,id:QUOTE.id,name:QUOTE.name,city:QUOTE.city,type:QUOTE.type,note:QUOTE.note,
+      list:Object.keys(QEDIT).map(k=>({sku:k,name:L[k].name,qty:QEDIT[k]})),link:BASE+"#q="+QUOTE.token});
     QUOTE.items=QUOTE.items.filter(i=>QEDIT[i.sku]).map(i=>({...i,qty:QEDIT[i.sku]}));
     toast("انحفظ التعديل ✓");renderQuote();
     location.href="https://wa.me/"+WA+"?text="+encodeURIComponent(msg);
