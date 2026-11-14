@@ -65,7 +65,19 @@ body.quote .how,body.quote .pills{display:none}
 .banner h2{font-family:var(--hfont);margin:0;font-size:21px}
 .banner p{margin:0;font-size:13px;opacity:.9}
 .banner .pos{margin-inline-start:auto;font-size:12.5px;background:rgba(255,255,255,.18);border-radius:999px;padding:3px 10px;white-space:nowrap;position:relative;z-index:1}
-.swipehint{text-align:center;font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.swipe{display:inline-flex;align-items:center;gap:10px;margin:12px auto 0;background:#fff;border:1px dashed color-mix(in srgb,var(--brand) 45%,transparent);border-radius:999px;padding:7px 16px 7px 12px;font-size:13.5px;color:var(--brand-d);font-weight:500}
+.swipe .hand{font-size:22px;display:inline-block;animation:hand 1.8s ease-in-out infinite}
+.swipe .arr{opacity:.55;font-size:12px}
+@keyframes hand{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(9px) rotate(8deg)}75%{transform:translateX(-9px) rotate(-8deg)}}
+.tabwrap{position:relative}
+.tarrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--brand-d);font-size:16px;font-weight:700;display:grid;place-items:center;box-shadow:0 2px 8px rgba(60,30,20,.15);transition:opacity .2s;padding:0;line-height:1}
+.tarrow.r{right:-6px}.tarrow.l{left:-6px}
+.tarrow.off{opacity:0;pointer-events:none}
+.tabwrap:before,.tabwrap:after{content:"";position:absolute;top:0;bottom:0;width:34px;z-index:1;pointer-events:none;transition:opacity .2s}
+.tabwrap:before{right:0;background:linear-gradient(to left,rgba(255,252,251,.95),transparent)}
+.tabwrap:after{left:0;background:linear-gradient(to right,rgba(255,252,251,.95),transparent)}
+.tabwrap.atR:before,.tabwrap.atL:after{opacity:0}
+@media (prefers-reduced-motion: reduce){.swipe .hand{animation:none}}
 .pager{display:flex;gap:10px;margin-top:18px}
 .pager button{--c:var(--brand);flex:1;border:1.5px solid var(--c);color:var(--c);background:#fff;border-radius:14px;padding:12px;font-weight:600;font-size:14px}
 .pager button.nx{background:var(--c);color:#fff}
@@ -223,6 +235,7 @@ footer a{color:var(--brand-d)}
       <div><b>٢</b><strong>حدد الكمية</strong>بالزائد والناقص</div>
       <div><b>٣</b><strong>أرسل طلبك</strong>ويوصلك عرض السعر</div>
     </div>
+    <div class="swipe"><span class="arr">→</span><span class="hand">👆</span><span>حرّك يمين ويسار للتنقل بين الأقسام</span><span class="arr">←</span></div>
   </div>
 </header>
 
@@ -233,7 +246,7 @@ footer a{color:var(--brand-d)}
         <input id="q" type="search" placeholder="ابحث باسم المنتج أو الكود…" autocomplete="off">
         <button class="iconbtn" id="dlBtn" title="تحميل الكتالوج">⬇︎ تحميل</button>
       </div>
-      <div class="tabs" id="tabs"></div>
+      <div class="tabwrap" id="tabwrap"><button class="tarrow r" id="tR" aria-label="الأقسام السابقة"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button><div class="tabs" id="tabs"></div><button class="tarrow l" id="tL" aria-label="أقسام أكثر"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
     </div>
   </div>
   <main class="wrap" id="list"><div class="empty">جاري تحميل المنتجات…</div></main>
@@ -310,6 +323,11 @@ function buildTabs(){
   t.innerHTML=all.map(s=>`<button class="tab" style="--c:${SEC_COLOR[s]||"var(--brand)"}" data-s="${esc(s)}"><i>${SEC_ICON[s]||"•"}</i><span>${esc(SEC_TITLE[s]||s)}</span><small>${num(ITEMS.filter(p=>p.sec===s).length)} منتج</small></button>`).join("");
   t.onclick=e=>{const b=e.target.closest(".tab");if(!b)return;goSec(b.dataset.s)};
   markTab();
+  const W=$("#tabwrap");const upd=()=>{const max=t.scrollWidth-t.clientWidth,x=Math.abs(t.scrollLeft);const atR=x<4,atL=x>max-4;
+    W.classList.toggle("atR",atR);W.classList.toggle("atL",atL);$("#tR").classList.toggle("off",atR);$("#tL").classList.toggle("off",atL)};
+  t.addEventListener("scroll",upd,{passive:true});window.addEventListener("resize",upd);setTimeout(upd,50);
+  $("#tL").onclick=()=>t.scrollBy({left:-t.clientWidth*.7,behavior:"smooth"});
+  $("#tR").onclick=()=>t.scrollBy({left:t.clientWidth*.7,behavior:"smooth"});
 }
 function markTab(){const t=$("#tabs");t.querySelectorAll(".tab").forEach(x=>{const on=x.dataset.s===CUR&&!$("#q").value.trim();x.classList.toggle("on",on);if(on)x.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"})})}
 function goSec(s,dir){if(!s)return;const all=secs();if(!dir)dir=all.indexOf(s)>all.indexOf(CUR)?"l":"r";
@@ -336,7 +354,6 @@ function renderList(dir){
   const s=CUR, i=all.indexOf(s), c=SEC_COLOR[s]||"var(--brand)", ps=ITEMS.filter(p=>p.sec===s);
   const prev=all[i-1], next=all[i+1];
   L.innerHTML=`<div class="banner" style="--c:${c}"><div class="ic">${SEC_ICON[s]||"•"}</div><div><h2>${esc(SEC_TITLE[s]||s)}</h2><p>${esc(SEC_DESC[s]||"")} · ${num(ps.length)} منتج</p></div><span class="pos">${num(i+1)} من ${num(all.length)}</span></div>
-    <p class="swipehint">اسحب يمين أو يسار للتنقل بين الأقسام</p>
     <section class="sec" style="margin-top:12px"><div class="grid">${ps.map(cardHTML).join("")}</div></section>
     <div class="pager">${prev?`<button style="--c:${SEC_COLOR[prev]}" data-go="${esc(prev)}" data-d="r">→ ${esc(SEC_TITLE[prev]||prev)}</button>`:""}${next?`<button class="nx" style="--c:${SEC_COLOR[next]}" data-go="${esc(next)}" data-d="l">${esc(SEC_TITLE[next]||next)} ←</button>`:""}</div>`;
   if(dir){L.classList.remove("slide-l","slide-r");void L.offsetWidth;L.classList.add(dir==="l"?"slide-l":"slide-r")}
